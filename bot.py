@@ -1,7 +1,7 @@
 import random
 import telebot
 
-bot = telebot.TeleBot("Token")
+bot = telebot.TeleBot("TOKEN")
 
 facts_data = [
     {
@@ -33,11 +33,22 @@ memes_data = [
     }
 ]
 
+pages_data = [
+    {
+        "page": "Статья ООН о причинах и последствиях глобального потепления:",
+        "title": "https://www.un.org/ru/climatechange/science/causes-effects-climate-change"
+    },
+    {
+        "page": "Статья ООН о глобальном потеплении:",
+        "title": "https://www.un.org/ru/un75/climate-crisis-race-we-can-win"
+    }
+]
+
 @bot.message_handler(commands=['start'])
 def send_welcome(message):
     with open('pictures/wildlife_mini.png', 'rb') as f:
         bot.send_photo(message.chat.id, f)
-    bot.reply_to(message, "Привет! Хочешь узнать полезные факты про глобальное потепление и понять почему оно опасно? Посмотреть рандомный факт - /fact , Посмотреть рандомный мем - /meme")
+    bot.reply_to(message, "Привет! Хочешь узнать полезные факты про глобальное потепление и понять почему оно опасно? Посмотреть рандомный факт - /fact , Посмотреть рандомную статью - /page")
 
 @bot.message_handler(commands=['fact'])
 def send_fact(message):
@@ -69,4 +80,12 @@ def send_fact(message):
     except Exception as e:
         bot.reply_to(message, f"Произошла ошибка: {e}")
 
-bot.polling()
+@bot.message_handler(commands=['page'])
+def send_fact(message):
+    random_item = random.choice(pages_data)
+    
+    random_page = random_item["page"]
+    random_title = random_item["title"]
+    bot.reply_to(message, random_title, random_page)
+
+bot.polling(timeout=60, long_polling_timeout=60)
